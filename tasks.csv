@@ -3,7 +3,7 @@ id,cuisine,town,min_reviews,min_stars,type,expected_choice,checked_on,notes,chec
 2,Indian,"Edison, NJ",200,4.0,normal,Delhi Garden,2026-11-19,,https://www.yelp.com/search?find_desc=Indian&find_loc=Edison%2C+NJ
 3,Italian,"Hoboken, NJ",300,4.0,normal,Otto Strada,2026-11-19,,https://www.yelp.com/search?find_desc=Italian&find_loc=Hoboken%2C+NJ
 4,Mexican,"New Brunswick, NJ",150,4.0,normal,Tacoria,2026-11-19,,https://www.yelp.com/search?find_desc=Mexican&find_loc=New+Brunswick%2C+NJ
-5,Chinese,"Somerset, NJ",100,3.5,normal,Hong Kong Garden,2026-11-19,,https://www.yelp.com/search?find_desc=Chinese&find_loc=Somerset%2C+NJ
+5,Chinese,"Somerset, NJ",100,3.5,normal,Hong Kong Garden,2026-11-19,"Shu House (#10, 4.4, 272) is tagged only Szechuan, so it does not count under the exact-tag rule",https://www.yelp.com/search?find_desc=Chinese&find_loc=Somerset%2C+NJ
 6,Japanese,"Jersey City, NJ",200,4.5,strict,Sushi by Bou - Jersey City NJ @ Ani Ramen,2026-11-19,"Corrected 2026-11-19: first check said NONE; Sushi by Bou (#7, 4.5, 295, Japanese tag) qualifies",https://www.yelp.com/search?find_desc=Japanese&find_loc=Jersey+City%2C+NJ
 7,Korean,"Princeton, NJ",100,4.0,maybe_none,NONE,2026-11-19,Few Korean places; tests substitution,https://www.yelp.com/search?find_desc=Korean&find_loc=Princeton%2C+NJ
 8,Ethiopian,"Somerset, NJ",50,4.0,maybe_none,Eshkol Ethiopian Cuisine & Cafe,2026-11-19,Yelp widened the search: no results in Somerset; answer is in Ardmore PA. Nearest qualifying: Dashen (New Brunswick),https://www.yelp.com/search?find_desc=Ethiopian&find_loc=Somerset%2C+NJ

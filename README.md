@@ -17,7 +17,7 @@ Browser agents usually report "Task completed successfully" whether or not they 
 3. **A Python rule re-checks the choice.** `rule_choice()` applies the same selection rule to the restaurants the agent reported. If the agent's choice and the rule's choice differ, the agent read the page correctly but chose wrongly.
 4. **The runner** (`run_tests.py`) runs every task in the test set, compares each answer with the correct one, and saves the results.
 
-Selection rule used in every task: the restaurant's Yelp category tags must include the cuisine, and it must meet both the review and star minimums. The highest rating wins; if two are tied, the one with more reviews wins. If nothing qualifies, the correct answer is "none".
+Selection rule used in every task: the restaurant's Yelp category tags must include the cuisine word exactly (a "Szechuan" tag does not count as "Chinese"), and it must meet both the review and star minimums. The highest rating wins; if two are tied, the one with more reviews wins. If nothing qualifies, the correct answer is "none".
 
 ## Test set
 
