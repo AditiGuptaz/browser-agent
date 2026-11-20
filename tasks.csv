@@ -1,11 +1,11 @@
 id,cuisine,town,min_reviews,min_stars,type,expected_choice,checked_on,notes,check_url
-1,Thai,"Princeton, NJ",200,4.0,baseline,,,Same task as your earlier runs,https://www.yelp.com/search?find_desc=Thai&find_loc=Princeton%2C+NJ
-2,Indian,"Edison, NJ",200,4.0,normal,,,,https://www.yelp.com/search?find_desc=Indian&find_loc=Edison%2C+NJ
-3,Italian,"Hoboken, NJ",300,4.0,normal,,,,https://www.yelp.com/search?find_desc=Italian&find_loc=Hoboken%2C+NJ
-4,Mexican,"New Brunswick, NJ",150,4.0,normal,,,,https://www.yelp.com/search?find_desc=Mexican&find_loc=New+Brunswick%2C+NJ
-5,Chinese,"Somerset, NJ",100,3.5,normal,,,,https://www.yelp.com/search?find_desc=Chinese&find_loc=Somerset%2C+NJ
-6,Japanese,"Jersey City, NJ",200,4.5,strict,,,High star cutoff; may have no match,https://www.yelp.com/search?find_desc=Japanese&find_loc=Jersey+City%2C+NJ
-7,Korean,"Princeton, NJ",100,4.0,maybe_none,,,Few Korean places; tests substitution,https://www.yelp.com/search?find_desc=Korean&find_loc=Princeton%2C+NJ
-8,Ethiopian,"Somerset, NJ",50,4.0,maybe_none,,,Rare cuisine; tests substitution,https://www.yelp.com/search?find_desc=Ethiopian&find_loc=Somerset%2C+NJ
-9,Thai,"Princeton, NJ",5000,4.0,designed_none,,,No place should qualify; agent must say none,https://www.yelp.com/search?find_desc=Thai&find_loc=Princeton%2C+NJ
-10,Vietnamese,"New Brunswick, NJ",100,4.0,normal,,,,https://www.yelp.com/search?find_desc=Vietnamese&find_loc=New+Brunswick%2C+NJ
+1,Thai,"Princeton, NJ",200,4.0,baseline,NONE,2026-11-19,Same task as your earlier runs,https://www.yelp.com/search?find_desc=Thai&find_loc=Princeton%2C+NJ
+2,Indian,"Edison, NJ",200,4.0,normal,Delhi Garden,2026-11-19,,https://www.yelp.com/search?find_desc=Indian&find_loc=Edison%2C+NJ
+3,Italian,"Hoboken, NJ",300,4.0,normal,Otto Strada,2026-11-19,,https://www.yelp.com/search?find_desc=Italian&find_loc=Hoboken%2C+NJ
+4,Mexican,"New Brunswick, NJ",150,4.0,normal,Tacoria,2026-11-19,,https://www.yelp.com/search?find_desc=Mexican&find_loc=New+Brunswick%2C+NJ
+5,Chinese,"Somerset, NJ",100,3.5,normal,Hong Kong Garden,2026-11-19,,https://www.yelp.com/search?find_desc=Chinese&find_loc=Somerset%2C+NJ
+6,Japanese,"Jersey City, NJ",200,4.5,strict,NONE,2026-11-19,High star cutoff; may have no match,https://www.yelp.com/search?find_desc=Japanese&find_loc=Jersey+City%2C+NJ
+7,Korean,"Princeton, NJ",100,4.0,maybe_none,NONE,2026-11-19,Few Korean places; tests substitution,https://www.yelp.com/search?find_desc=Korean&find_loc=Princeton%2C+NJ
+8,Ethiopian,"Somerset, NJ",50,4.0,maybe_none,Eshkol Ethiopian Cuisine & Cafe,2026-11-19,Yelp widened the search: no results in Somerset; answer is in Ardmore PA. Nearest qualifying: Dashen (New Brunswick),https://www.yelp.com/search?find_desc=Ethiopian&find_loc=Somerset%2C+NJ
+9,Thai,"Princeton, NJ",5000,4.0,designed_none,NONE,2026-11-19,"Same page as task 1; most-reviewed place there had 660 reviews, so none can reach 5000",https://www.yelp.com/search?find_desc=Thai&find_loc=Princeton%2C+NJ
+10,Vietnamese,"New Brunswick, NJ",100,4.0,normal,Baguette Delite,2026-11-19,,https://www.yelp.com/search?find_desc=Vietnamese&find_loc=New+Brunswick%2C+NJ

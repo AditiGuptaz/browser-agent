@@ -47,6 +47,12 @@ class SearchResult(BaseModel):
 
 
 # ---------- Task prompts, one per site ----------
+# The original, loosely worded prompt, kept for the before/after comparison.
+YELP_LOOSE_TASK = (
+    "Go to Yelp and find a {cuisine} restaurant in {town} with at least {min_reviews} reviews "
+    "and {min_stars} or higher stars. Pick the one with the highest rating and open its page."
+)
+
 YELP_TASK = (
     "Go to {url} . "
     "Do not click any filter buttons. "
@@ -79,8 +85,19 @@ GOOGLE_MAPS_TASK = (
 )
 
 
-def build_task(site: str, cuisine: str, town: str, min_reviews: int, min_stars: float) -> str:
-    """Fill in the prompt for the chosen site."""
+def build_task(
+    site: str, cuisine: str, town: str, min_reviews: int, min_stars: float, prompt: str = "improved"
+) -> str:
+    """Fill in the prompt for the chosen site. prompt is "improved" or "loose" (Yelp only)."""
+    if prompt == "loose":
+        if site != "yelp":
+            raise ValueError("The loose prompt is only defined for Yelp.")
+        return YELP_LOOSE_TASK.format(
+            cuisine=cuisine, town=town, min_reviews=min_reviews, min_stars=min_stars
+        )
+    if prompt != "improved":
+        raise ValueError(f"Unknown prompt: {prompt}. Use 'improved' or 'loose'.")
+
     if site == "yelp":
         url = (
             "https://www.yelp.com/search?find_desc="
@@ -127,10 +144,11 @@ async def run_search(
     site: str = SITE,
     model: str = MODEL,
     max_steps: int = MAX_STEPS,
+    prompt: str = "improved",
 ) -> dict:
     """Run the agent once and return a summary that can be saved as one row of results."""
     agent = Agent(
-        task=build_task(site, cuisine, town, min_reviews, min_stars),
+        task=build_task(site, cuisine, town, min_reviews, min_stars, prompt),
         llm=ChatOpenAI(model=model),
         output_model_schema=SearchResult,
         calculate_cost=True,
@@ -139,6 +157,7 @@ async def run_search(
     summary = {
         "site": site,
         "model": model,
+        "prompt": prompt,
         "cuisine": cuisine,
         "town": town,
         "min_reviews": min_reviews,
