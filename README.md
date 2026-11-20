@@ -30,7 +30,7 @@ Selection rule used in every task: the restaurant's Yelp category tags must incl
 | 3 | Italian, Hoboken | 300, 4.0 | Otto Strada (the top-rated place misses the review minimum) |
 | 4 | Mexican, New Brunswick | 150, 4.0 | Tacoria |
 | 5 | Chinese, Somerset | 100, 3.5 | Hong Kong Garden |
-| 6 | Japanese, Jersey City | 200, 4.5 | None |
+| 6 | Japanese, Jersey City | 200, 4.5 | Sushi by Bou (exactly meets the 4.5 minimum) |
 | 7 | Korean, Princeton | 100, 4.0 | None |
 | 8 | Ethiopian, Somerset | 50, 4.0 | Eshkol Ethiopian Cuisine & Cafe |
 | 9 | Thai, Princeton | 5,000, 4.0 | None (built to have no answer) |
