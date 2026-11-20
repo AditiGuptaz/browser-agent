@@ -4,7 +4,9 @@ A browser agent that searches Yelp for restaurants matching a cuisine, a town, a
 
 The agent itself is only a few lines of code on top of [browser-use](https://github.com/browser-use/browser-use). This project is about what happens around it: where the agent goes wrong, how to check its answers against something other than its own word, and which changes to the prompt make it more reliable.
 
-**Status:** work in progress. The test set and runner are built. The full test runs and results table are next.
+**Status:** first full test complete (40 runs, November 2026). Next step: checking the agent's answer against each restaurant's own Yelp page.
+
+**Main result:** the stricter prompt made the agent faster and cheaper but less accurate, because it often found the right restaurant and then answered "none" anyway. Letting plain Python make the final choice from the agent's list fixed most of that: **80% correct, against 75% for the original prompt, at 40% of the cost.**
 
 ## Why this project
 
@@ -38,9 +40,9 @@ Selection rule used in every task: the restaurant's Yelp category tags must incl
 
 The set mixes tasks with a clear answer, tasks that test the tie-break and the review minimum, and tasks where the right answer is "none". The "none" tasks matter most: they show whether the agent admits nothing qualifies or substitutes something that doesn't.
 
-## What I found so far
+## Early observations
 
-These come from early runs and from checking the agent's answers against the live Yelp pages by hand. They are observations from a small number of runs, not measured rates; the test runs will put numbers on them.
+These come from my first runs, before the test set existed. They are what led to the improved prompt. The measured results are further down.
 
 **1. It reports success when it is wrong.** With a loosely worded prompt, the agent searched for Thai restaurants in Princeton, clicked filters nobody asked for (Price, Open Now), scrolled for 12 steps, and finally chose Lan Ramen, a Chinese and ramen restaurant. It reported the task as successful.
 
@@ -69,12 +71,56 @@ The original loose prompt is kept in `agent.py` so both versions can be compared
 
 ## Results
 
-*Pending.* The plan is to run every task twice with the original prompt and twice with the improved one, and report for each:
+40 runs: 10 tasks, 2 prompts, 2 runs each. GPT-4o, browser-use 0.13.10, run on 19 and 20 November 2026. Each answer was scored against the hand-checked answer key.
 
-- how many answers were correct
-- average steps and cost per run
-- how often each mistake above occurred
-- how often the agent's own "success" and the built-in judge agreed with the correct answer
+| | Original prompt | Improved prompt | Improved prompt + Python decides |
+|---|---|---|---|
+| Correct | 15 of 20 (75%) | 12 of 20 (60%) | **16 of 20 (80%)** |
+| Tasks with a real answer | 9 of 14 | 6 of 14 | **10 of 14** |
+| Tasks where the answer is "none" | 6 of 6 | 6 of 6 | 6 of 6 |
+| Average steps | 9.8 | **4.2** | 4.2 |
+| Average time per run | 112 s | **56 s** | 56 s |
+| Cost per run | $0.34 | **$0.14** | $0.14 |
+
+"Python decides" is not a separate set of runs. It takes the restaurants the agent listed in the improved-prompt runs and applies the selection rule in code (`rule_choice()` in `agent.py`), instead of using the agent's own choice.
+
+Results by task (✓ correct, ✗ wrong; two runs each):
+
+| Task | Original | Improved | Improved + Python |
+|---|---|---|---|
+| 1 Thai, Princeton (none) | ✓ ✓ | ✓ ✓ | ✓ ✓ |
+| 2 Indian, Edison | ✗ ✓ | ✓ ✓ | ✓ ✓ |
+| 3 Italian, Hoboken | ✓ ✓ | ✓ ✗ | ✓ ✗ |
+| 4 Mexican, New Brunswick | ✗ ✓ | ✗ ✗ | ✓ ✓ |
+| 5 Chinese, Somerset | ✓ ✓ | ✗ ✗ | ✗ ✗ |
+| 6 Japanese, Jersey City | ✗ ✓ | ✗ ✗ | ✗ ✓ |
+| 7 Korean, Princeton (none) | ✓ ✓ | ✓ ✓ | ✓ ✓ |
+| 8 Ethiopian, Somerset | ✗ ✗ | ✓ ✗ | ✓ ✓ |
+| 9 Thai, Princeton (built to be none) | ✓ ✓ | ✓ ✓ | ✓ ✓ |
+| 10 Vietnamese, New Brunswick | ✓ ✓ | ✓ ✓ | ✓ ✓ |
+
+## What the results show
+
+**1. The improved prompt read the page well but decided badly.** In almost every run it listed most of the first page correctly. But in three runs (task 4 twice, task 6 once) its own list contained a restaurant that met every rule, and it still answered "none". In one more (task 8) it picked the restaurant with the most reviews instead of the highest rating. My guess is that the strong "if none qualify, say so, don't substitute" instruction, added to stop wrong substitutions, pushed it too far towards "none".
+
+**2. Taking the decision away from the model fixed most of it.** Applying the rule in code to the same lists turned 12 correct into 16, the best result of the three. Language models are good at reading messy pages and unreliable at applying exact rules; code is the opposite.
+
+**3. The mistakes that remain are reading mistakes.** Code can't fix a wrong list:
+- It **added a tag that isn't there**: Shu House is tagged only "Szechuan" on Yelp, but the agent recorded "Szechuan, Chinese" (task 5, both runs).
+- It **used an ad and changed its town**: Laboratorio Kitchen, a sponsored listing from Montclair, was recorded as being in Hoboken (task 3).
+- It **missed a restaurant** at #7 on the page (task 6).
+
+**4. The original prompt decided better but read less, and made things up.** In 9 of its 20 runs it listed three restaurants or fewer, so it often never saw the right answer. It added the cuisine it was looking for to restaurants' tags (Lan Ramen recorded as "Thai"), gave every restaurant the town "Somerset, NJ" in one run, and twice chose a restaurant tagged "African" for an Ethiopian search.
+
+**5. The agent's "success" means nothing.** It reported success in all 40 runs. 13 of them were wrong.
+
+**6. The built-in judge is not much better.** It agreed with the answer key in 27 of 40 runs (68%). It approved 9 wrong answers and failed 4 correct ones, sometimes for reasons outside the task (a "verifying device" screen, or its own idea that the restaurant should be in the named town).
+
+**7. One run is not enough.** In 5 of the 20 task-and-prompt pairs, the two runs gave different results.
+
+**8. The answer key needed checking too.** My first hand check of task 6 missed Sushi by Bou at #7. I only caught it because the agent listed it. The key was corrected and all runs re-scored (`rescore.py`).
+
+Total cost of the 40 runs: $9.62.
 
 ## Running it
 
@@ -107,7 +153,9 @@ python run_tests.py --runs 2 --prompt both --max-cost 3 # full comparison, stops
 
 Results are saved to `results/results.csv` (one row per run) and `results/runs.jsonl` (full details), as each run finishes.
 
-Each run costs about $0.12 to $0.17 with GPT-4o.
+With GPT-4o, a run costs about $0.12 to $0.20 with the improved prompt and $0.13 to $0.55 with the original one.
+
+After a test run, `python show_runs.py` writes a readable report of every run to `results/runs_readable.md`. If you correct an answer in `tasks.csv`, `python rescore.py` re-scores the saved results without re-running anything.
 
 ## Files
 
@@ -116,11 +164,14 @@ Each run costs about $0.12 to $0.17 with GPT-4o.
 | `agent.py` | The agent: builds the prompt, runs one search, returns a structured summary |
 | `run_tests.py` | Runs the test set, scores each answer, saves results, enforces a spending limit |
 | `tasks.csv` | The 10 test tasks with hand-checked correct answers |
+| `show_runs.py` | Turns the saved runs into a readable report |
+| `rescore.py` | Re-scores saved results after the answer key changes |
 | `requirements.txt` | Python packages |
 
 ## Limitations
 
-- **Small test set.** 10 tasks in one region. Enough to show patterns, not to give precise rates.
+- **Small test set.** 10 tasks in one region, two runs each. Enough to show patterns, not to give precise rates; a difference of one or two runs is within noise.
+- **"Python decides" was measured after the fact.** It uses the same runs, not new ones, so it shows what the decision step would have done with those lists.
 - **Yelp changes.** Ratings, review counts and result order change over time, so the correct answers are only valid around the date they were checked.
 - **Distance isn't part of the rule.** For the Ethiopian search in Somerset, Yelp widened the search and the top answer is in Pennsylvania. The agent follows the rule correctly but the answer isn't useful to someone in Somerset. The rules only cover what they say.
 - **One site, one model.** All tests use Yelp and GPT-4o. The same restaurant can look very different on another site: Thai Village in Princeton has 2.9 stars on Yelp and 4.5 on Google Maps.
